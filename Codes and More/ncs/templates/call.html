@@ -1,0 +1,339 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Monitoring</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+
+
+  <style type="text/css">
+
+  	table th{
+	   text-align: center;
+	}
+	.table {
+	   margin: auto;
+	   width: 100% !important;
+	}
+
+	.sections {
+	    {#display:table;#}
+	    width: 100%;
+	    /*padding:5px; */
+	    position: relative;
+	}
+
+	.shake_call {
+        background: red;
+        border: 0;
+        font-size: 20px;
+        padding: 10px 20px;
+        position: relative;
+        animation-name: shake;
+        animation-duration: 1ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in;
+        cursor: pointer;
+    }
+
+    @keyframes shake {
+      0% {left: 0}
+      1% {left: -3px}
+      2% {left: 5px}
+      3% {left: -8px}
+      4% {left: 8px}
+      5% {left: -5px}
+      6% {left: 3px}
+      7% {left: 0}
+    }
+
+    .bubble{
+	  animation: animateElement linear .3s;
+	  animation-iteration-count: 1;
+	  /*background:#e7e7e7;*/
+	  background:#f4f4f4;
+	  margin-bottom:5px;
+	  width:100%;
+	  min-height:30px;
+	  border-radius:10px;
+	 }
+
+	@keyframes animateElement{
+	  0% {
+	    opacity:0;
+	    transform:  translate(0px,10px);
+	  }
+	  100% {
+	    opacity:1;
+	    transform:  translate(0px,0px);
+	  }
+	}
+  </style>
+
+</head>
+
+<body>
+	<center>
+	<div class="container">
+	  <h1>Easy Nurse</h1>
+	  <br>
+	  <!-- <button type="button" id="refresh" class="btn btn-primary">Refresh</button>  -->
+{#	  <button type="button" id="call_status" class="btn btn-success">Call Status</button>#}
+{#	  <button type="button" id="refresh" class="btn btn-warning">Refresh</button>#}
+{#	  <button type="button" id="del_noti" class="btn btn-danger">Delete Call</button>#}
+	  <input type="hidden" id="last_call_id" value="{{last_call_id}}">
+{##}
+{#	  <br>#}
+{#	  <br>#}
+{#	  <button type="button" id="add_call" class="btn btn-success">Add Call</button>#}
+{#	  <button type="button" id="down_call" class="btn btn-danger">Down Call</button>#}
+
+	  <br>
+	  <br>
+
+	  <table id="myTable" class="table table-condensed  table-bordered table-striped text-center">
+	    <thead>
+	      <tr class="sections">
+            <th>ID NO</th>
+            <th>BED NO</th>
+            <th>NURSE</th>
+            <th>CALL TIME</th>
+            <th>REC TIME</th>
+            <th>SERVE TIME</th>
+            <th>STATUS</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+			{% for call in calls%}
+				<tr id=trb{{call.id}} class=sections>
+					<td>{{ call.id }}</td>
+					<td>{{ call.bed }}</td>
+					<td>{{ call.nurse.name }}</td>
+					<td>{{ call.call_time }}</td>
+                    <td>{{ call.rec_time }}</td>
+                    <td>{{ call.serv_time }}</td>
+					<td>
+						<button class="btn btn-success" id=b{{ call.id }}> {{ call.status }} </button>
+					</td>
+				</tr>
+			{% endfor %}
+	    </tbody>
+	  </table>
+	</div>
+	</center>
+</body>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+<script type="text/javascript">
+
+	var toggle = true;
+	var last_call_id = $('#last_call_id').val();
+
+	console.log(last_call_id);
+
+	$('#refresh').on('click',function() {
+     	console.log("refresh clicked");
+     	location.reload();
+    });
+
+    $('#del_noti').on('click',function() {
+     	console.log("delete");
+     	var temp = document.getElementById("myTable");
+     	try {
+		  temp.deleteRow(1);
+		}
+		catch(err) {
+		  console.log("nothing to delete");
+		}
+    });
+
+    $('#call_status').on('click',function() {
+     	console.log("call_status clicked");
+
+     	console.log(toggle);
+     	var t1 ="#b"+last_call_id;
+
+     	if(toggle){
+     		$(t1).addClass('shake_call');
+     	}else{
+     		$(t1).removeClass('shake_call');
+     		status_change(t1);
+     	}
+
+     	toggle=!toggle;
+    });
+
+    function status_change(id)
+	{
+		$(id).removeClass('btn-danger');
+		$(id).addClass('btn-success');
+		$(id).html('Received');
+	}
+
+    $('tr button').on('click',function(){
+    	console.log("button clicked!");
+	    var button_id = $(this).attr('id');
+	    console.log(button_id);
+	    $('#tr'+button_id).remove();
+	});
+
+	$('#down_call').on('click',function(){
+		// last_call_id = 4;
+		// console.log(last_call_id);
+		var t1 = $('#trb'+last_call_id);
+		var t2 = t1.next();
+
+	    status_change("#b"+last_call_id);
+
+	    var set_01 = t1.height() + 10;  //live
+	    var set_02 = t2.height() + 10;  //not live
+	    console.log('set_01',set_01);
+	    console.log('set_02',set_02);
+
+	    t2.animate({top: '-'+set_02+'px'}, 500);
+	    t1.animate({bottom:'-'+set_01+'px' }, 500,function(){
+	        t1.insertAfter(t2);
+	        t1.css("bottom","0");
+	        t2.css("top","0");
+	        t1.removeAttr("style");
+	    });
+
+	});
+
+	$('document').ready(function () {
+		//request every x seconds
+<<<<<<< HEAD
+	 	setInterval(function () {make_it_live()}, 2500);
+	 	//location.reload();
+=======
+	 	setInterval(function () {make_it_live()}, 1000);
+>>>>>>> d6527fd11b5a7e56e249db6425a8738ebf91aa3e
+	 	//setInterval(function () {location.reload()}, 1000);
+	 });
+
+    {#make_it_live();#}
+
+	function make_it_live()
+	{
+		$.ajax({
+			type: 'POST',
+			url: "api/",
+			data: {
+				'ajax_call':'M1o2n3i4t5o6r7i8n9g',
+				'last_call_id': last_call_id,
+			},
+			dataType: "json",
+			success: function(result) {
+
+				//console.log("Save Complete");
+
+				if(result.hasOwnProperty('call_msg')){
+					var call_msg = result.call_msg;
+					var call_status = result.call_status;
+
+					// Pending NURSE->Received RFID->Served
+                    // add_row_to_table(call_msg);
+					console.log(call_status);
+
+					if(call_status == "create")
+                    {
+                        add_row_to_table(call_msg);
+                    }
+					else if (call_status == "update")
+                    {
+                        console.log("update received field");
+                        if(call_msg.status !="pending") {
+                            console.log(call_msg.status == "Served");
+                            update_row_from_table(call_msg);
+                        }
+                    }
+					else if(call_status =="nothing"){
+					    console.log("do nothing");
+                    }
+				}else{
+					console.log(result);
+				}
+				{#console.log(result.response);#}
+			}
+	 	});
+	}
+
+	function update_row_from_table(call_json)
+    {
+        console.log(call_json);
+        var update_row = $('#trb'+call_json.id);
+
+        var cell_length = update_row[0].cells.length;
+		var counter = 0;
+		var data="";
+		var button_status = "";
+
+		if(call_json.status=="received")
+		{
+			button_status = "btn-warning";
+		}
+		if(call_json.status == "Served")
+        {
+            button_status ="btn-success";
+        }
+
+		for(var key in call_json){
+
+		  data = call_json[key];
+		  console.log(data);
+		  update_row[0].cells[counter].innerHTML = data;
+		  counter+=1;
+		}
+
+		var custom_button = "<button "
+							+"class=\"btn "+button_status+"\" id=\"b"
+							+call_json.id+"\">"
+							+call_json.status
+							+"</button>"
+
+		update_row[0].cells[counter-1].innerHTML = custom_button;
+
+		counter = 0;
+    }
+
+ 	function add_row_to_table(call_json)
+ 	{
+		console.log(call_json.id);
+		console.log(call_json.bed);
+		console.log(call_json.call_time);
+		console.log(call_json.status);
+		console.log(call_json.nurse);
+		console.log(call_json.rec_time);
+		console.log(call_json.serve_time);
+
+		last_call_id = call_json.id;
+
+    	$('#myTable').prepend(
+    		"<tr id=\"trb"+call_json.id+"\" class=\"bubble sections\">"
+    			+"<td>"+call_json.id+"</td>"
+    			+"<td>"+call_json.bed+"</td>"
+				+"<td>"+call_json.nurse+"</td>"
+                +"<td>"+call_json.call_time+"</td>"
+                +"<td>"+call_json.rec_time+"</td>"
+				+"<td>"+call_json.serve_time+"</td>"
+				+"<td>"
+					+"<button "
+						+"class=\"btn btn-danger\" id=\"b"
+						+call_json.id+"\">"
+						+call_json.status
+					+"</button>"
+				+"</td>"
+    		+"</tr>"
+    	);
+ 	}
+
+</script>
+
+
+</html>

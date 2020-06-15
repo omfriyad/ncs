@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .shake_call {
+            background: red;
+            border: 0;
+            font-size: 20px;
+            padding: 10px 20px;
+            position: relative;
+            animation-name: shake;
+            animation-duration: 1ms;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in;
+            cursor: pointer;
+        }
+
+        @keyframes shake {
+          0% {left: 0}
+          1% {left: -3px}
+          2% {left: 5px}
+          3% {left: -8px}
+          4% {left: 8px}
+          5% {left: -5px}
+          6% {left: 3px}
+          7% {left: 0}
+        }
+    </style>
+
+
+</head>
+<body>
+{#    <h2 id="status">{{ shake }}</h2>#}
+    <h1>Nurse Calling System</h1>
+    <br>
+
+    <button type="button" id="call_button" class="btn btn-danger">Emergency Call</button>
+    <button type="button" class="btn btn-success" onclick="stop_button()">Receive Call</button>
+
+    <br>
+    <br>
+    <button type="button" class="btn btn-primary" onclick="shake_button()">Ting Ting</button>
+
+</body>
+
+<script>
+    {#console.log(document.getElementById('status').innerText);#}
+
+    function shake_button() {
+        {#if document.getElementById('status').innerText = 'True':#}
+        console.log("Shake it");
+        document.getElementById('call_button').classList.add("shake_call");
+    }
+
+    function stop_button() {
+        console.log("call received");
+        document.getElementById('call_button').classList.remove("shake_call");
+    }
+
+</script>
+</html>

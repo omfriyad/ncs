@@ -1,0 +1,15 @@
+Hackintosh:
+Step 0: macOS High Sierra 10.13.6
+Step 1: Research
+	System:
+		CPU: i7 7700K
+		MOBO: Asus Z270H
+		GPU: GTX1070
+	Online Guides:
+		1. https://www.reddit.com/r/hackintosh/comments/c2s8pm/success_i77700k_graphics_hd_630_running_macos/
+		2. 
+Step 2: Download Everything you need
+Step 3: THE USB BOOTABLE and Configure EFI
+Step 4: Configure BIOS
+Step 5: Installation
+Step 6: Drivers and fixes
